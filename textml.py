@@ -119,26 +119,26 @@ st.write('The accuracy score if using naive bayes classifier is: ',clf.score(X_t
 
 
 
-@st.cache
-def convert_df(df):
-   return df.to_csv().encode('utf-8')
+#@st.cache
+#def convert_df(df):
+#   return df.to_csv().encode('utf-8')
 
 
-csv_train = convert_df(train_t)
-csv_test = convert_df(test_t)
+#csv_train = convert_df(train_t)
+#csv_test = convert_df(test_t)
 
-st.download_button(
-   "Press to Download Training Data",
-   csv_train,
-   "train.csv",
-   "text/csv",
-   key='download-csv'
-)
+#st.download_button(
+#   "Press to Download Training Data",
+#   csv_train,
+#   "train.csv",
+#   "text/csv",
+#   key='download-csv'
+#)
 
-st.download_button(
-   "Press to Download Testing Data",
-   csv_test,
-   "test.csv",
-   "text/csv",
-   key='download-csv'
-)
+#st.download_button(
+#   "Press to Download Testing Data",
+#   csv_test,
+#   "test.csv",
+#   "text/csv",
+#   key='download-csv'
+#)
