@@ -10,22 +10,30 @@ from sklearn.naive_bayes import GaussianNB
 
 st.write("""
 # Classification for OASIS MRI Data
-This app predicts the dementia based on biological index.
+This app predicts the dementia based on current biological index and situation.
 """)
-
+st.subheader('How it works?')
+st.write('You can fiddle with the input data on sidebar, classifiers will predict the results based on your input!')
+st.write('Your input data will also be shown below in the User Input Parameters box.')
+st.write('The classifiers are trained with training data. Thus, besides the result from your input data, it will also show the results from testing data.')
+st.write('Here we provide two classifiers to learn the input data and build two models based on them: Random Forest Classifier and Naive Bayes Classifier')
+st.write('Random Forest Classifier: "A random forest is a meta estimator that fits a number of decision tree classifiers on various sub-samples of the dataset and uses averaging to improve the predictive accuracy and control over-fitting." (scikit learn)')
+st.write('Naive Bayes Classifier: "Naive Bayes methods are a set of supervised learning algorithms based on applying Bayes’ theorem with the “naive” assumption of conditional independence between every pair of features given the value of the class variable." (scikit learn)' )
+st.subheader('Prediction Problem')
+st.write('How we can use known patient information to predict the probability of dementia using classification for this patient?')
 
 st.sidebar.header('User Input Parameters')
 
 def user_input_features():
-    ASF = st.sidebar.slider('ASF', 0.80, 1.60, 0.88)
+    ASF = st.sidebar.slider('ASF(Atlas Scaling Factor)', 0.80, 1.60, 0.88)
     Age = st.sidebar.slider('Age', 60, 99, 87)
-    CDR = st.sidebar.slider('CDR', 0.0, 2.0, 0.0)
-    EDUC = st.sidebar.slider('EDUC', 11.0, 23.0, 14.0)
-    MMSE = st.sidebar.slider('MMSE', 4.0, 30.0,27.0)
-    SES = st.sidebar.slider('SES', 0.50,5.25,2.00)
-    eTIV = st.sidebar.slider('eTIV', 1100.0,2050.0,1987.0)
-    gender = st.sidebar.slider('gender(should only choose between 0 and 1)', 0, 1,0)
-    nWBV = st.sidebar.slider('nWBV', 0.63, 0.85,0.69)
+    CDR = st.sidebar.slider('CDR(Clinical Dementia Rating)', 0.0, 2.0, 0.0)
+    EDUC = st.sidebar.slider('EDUC(Years of Education)', 11.0, 23.0, 14.0)
+    MMSE = st.sidebar.slider('MMSE(Mini-Mental State Exam)', 4.0, 30.0,27.0)
+    SES = st.sidebar.slider('SES(Social Economic Status)', 0.50,5.25,2.00)
+    eTIV = st.sidebar.slider('eTIV(Estimated Total Inctracranial Volume)', 1100.0,2050.0,1987.0)
+    gender = st.sidebar.slider('gender(0-Male, 1-Female)', 0, 1,0)
+    nWBV = st.sidebar.slider('nWBV(Normalize Whole Brain Volume)', 0.63, 0.85,0.69)
 
     data = {'ASF': ASF,
             'Age': Age,
@@ -89,25 +97,33 @@ prediction_probaNB = gnb.predict_proba(df)
 #st.subheader('Class labels and their corresponding index number')
 #st.write(iris.target_names)
 
-st.subheader('Prediction Using Random Forest From User Input')
-#st.write(iris.target_names[prediction])
+st.subheader('Prediction From User Input')
+st.write('Using Random Forest')
 st.write(prediction)
-
-st.subheader('Prediction Using Naive Bayes From User Input')
+st.write('Based on your input data, the patient is diagnosed as: ', prediction[0])
+st.write('Using Naive Bayes')
 st.write(predictionNB)
+st.write('Based on your input data, the patient is diagnosed as: ', predictionNB[0])
 
-st.subheader('Prediction Probability Using Random Forest From User Input')
+st.subheader('Prediction Probability From User Input')
+st.write('How to understand the result?')
+st.write('The (0,0) box shows the probability of being diagnosed as demented; the (1,0) box shows the probability of being diagnosed as nondemented')
+st.write('Using Random Forest Classifier')
 st.write(prediction_proba)
-st.subheader('Prediction Probability Using Naive Bayes From User Input')
+st.write(' Using Naive Bayes')
 st.write(prediction_probaNB)
 
 
 #Using test data
 t_pred = clf.predict(X_test)
 tnb_pred = gnb.predict(X_test)
-st.subheader('Prediction Result Using Random Forest From Test Data')
+
+
+st.subheader('Prediction Result From Test Data')
+st.write('Using Random Forest')
 st.write(t_pred)
-st.subheader('Prediction Result Using Naive Bayes From Test Data')
+#st.subheader('Prediction Result Using Naive Bayes From Test Data')
+st.write('Using Naive Bayes')
 st.write(tnb_pred)
 st.subheader('True Test Data Label')
 st.write(y_test)
@@ -117,6 +133,16 @@ st.write('The accuracy score if using naive bayes classifier is: ',clf.score(X_t
 
 
 
+
+#uploading data
+urlpred_t = 'https://finalproject-42236-default-rtdb.firebaseio.com/rlt_random_forest.json'
+urlpred_tnb = 'https://finalproject-42236-default-rtdb.firebaseio.com/rlt_naive_bayes.json'
+
+t_j = json.dumps(t_pred.tolist())
+tnb_j = json.dumps(tnb_pred.tolist())
+
+r1 = requests.put(urlpred_t, t_j)
+r2 = requests.put(urlpred_tnb, tnb_j)
 
 
 #@st.cache
